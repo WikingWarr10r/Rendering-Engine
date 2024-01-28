@@ -1,3 +1,5 @@
+import numpy as np
+
 class Point:
     def __init__(self, x, y, z):
         self.x = x
@@ -5,7 +7,15 @@ class Point:
         self.z = z
 
     def __add__(self, other):
-        return Point(self.x + other.x, self.y + other.y, self.z + other.z)
+        if isinstance(other, np.ndarray):
+            return Point(self.x + other[0], self.y + other[1], self.z + other[2])
+        elif isinstance(other, Point):
+            return Point(self.x + other.x, self.y + other.y, self.z + other.z)
+        else:
+            raise TypeError("Unsupported type for addition")
+        
+    def __iter__(self):
+        return iter([self.x, self.y, self.z])
 
 def parse_obj_file(file_path):
     vertices = []
