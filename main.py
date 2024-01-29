@@ -69,18 +69,12 @@ def render_scene(screen, colors, objects, player):
             except IndexError:
                 base_color = (255, 0, 255)
 
-            centroid = np.mean([np.array(vertex[0]) for vertex, _ in triangle], axis=0)
+            distance = math.sqrt(math.pow(triangle[0][1] - player.position[0], 2) + math.pow(triangle[0][1] - player.position[1], 2) + math.pow(triangle[0][1] - player.position[2], 2))
+            fog_multiplier = 50
+            fog = distance / fog_multiplier
 
-            light_direction = np.array([0.2, -1, 0])
+            lighting_intensity = max(0.0, min(1.0, (i + 1) / len(sorted_triangles)) - fog)
 
-            normal = calculate_triangle_normal(triangle)
-
-            sun_intensity = np.dot(normal, light_direction)
-
-            if sun_intensity.any() < 0:
-                sun_intensity = 0
-            
-            lighting_intensity = min(1.0, (i + 1) / len(sorted_triangles))
             color = tuple(int(c * math.pow(lighting_intensity, 2)) for c in base_color)
             render_triangle(screen, color, [vertex for vertex, _ in triangle])
             i += 1
